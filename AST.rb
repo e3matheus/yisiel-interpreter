@@ -38,6 +38,9 @@ class ASTTernario < AST
 		@term2 = term2
 		@term3 = term3
 	end
+  def check(*tabla)
+    return @term1.check
+  end
 end
 
 class ASTMultiple < AST
@@ -47,6 +50,11 @@ class ASTMultiple < AST
 	end
   def insertaHijo(hijo)
     @hijos.push(hijo)
+  end
+  def check(*tabla)
+    @hijos.each do |x|
+      x.check()
+    end
   end
 end
 
@@ -61,6 +69,30 @@ class ASTDec < ASTBinario
       end
     end
   end
+
+  # ESTA INENTENDIBLEEEEEEEEEEEEEEEEEEEEE........
+  def check(*tabla)
+    if (@term2.class.to_s == 'TkValue') 
+      sym = 'SymVar'
+    else
+      sym = 'SymArray'
+    end
+    @term1.hijos.each do |hijo|
+      begin
+        case tabla.length
+          when 0 # Revisa Solo la Tabla Global.
+            bool = $tablaGlobal.isTwice(hijo.getId(), sym)
+            raise DeclaracionRepetida, "Declaracion repetida en linea #{hijo.getToken().line}, columna #{hijo.getToken().col}" if bool 
+          when 1 # Revisa una tabla local y la tabla global.
+            bool = $tablaGlobal.isTwice(hijo.getId(),sym) && tabla.isTwice(hijo.getId(),sym)
+            raise DeclaracionRepetida, "Declaracion repetida en linea #{hijo.getToken().line}, columna #{hijo.getToken().col}" if bool 
+        end
+      rescue DeclaracionRepetida => err
+        puts "\n#{err}"
+      end
+    end
+  end
+
 end
 
 class ASTMath < ASTBinario
@@ -69,7 +101,7 @@ class ASTMath < ASTBinario
 end
 
 class ASTSuma < ASTMath
-  def check(symtable, symtableG)
+  def check(symtable)
     chterm1 = @term1.check(symtable)  
     chterm2 = @term2.check(symtable)
     if chterm1 && chterm2
@@ -87,7 +119,7 @@ class ASTSuma < ASTMath
 end
 
 class ASTResta < ASTMath
-  def check(symtble, symtableG)
+  def check(symtable)
     chterm1 = @term1.check(symtable)  
     chterm2 = @term2.check(symtable)
     if chterm1 && chterm2
@@ -104,7 +136,7 @@ class ASTResta < ASTMath
 end
 
 class ASTMult < ASTMath
-  def check(symtble, symtableG)
+  def check(symtable)
     chterm1 = @term1.check(symtable)  
     chterm2 = @term2.check(symtable)
     if chterm1 && chterm2

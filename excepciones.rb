@@ -15,3 +15,7 @@ end
 # Descripción: Excepción que maneja los caracteres que no reconoce el lexer.
 class CaracterInesperado < RuntimeError
 end
+
+# Descripción: Excepción que maneja cuando se declara 2 veces una variable.
+class DeclaracionRepetida < RuntimeError
+end
