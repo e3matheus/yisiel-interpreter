@@ -59,9 +59,9 @@ class ASTMultiple < AST
 end
 
 class ASTMultipleProc < ASTMultiple
-  def check(tabla)
+  def check(*tabla)
     @hijos.each do |x|
-      x.check(tabla)     
+      x.check(*tabla)     
     end
   end
 end

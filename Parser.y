@@ -143,7 +143,7 @@ seleccion:  TkIf y TkFi                 { result = val[1]; puts "seleccion -> if
 ;
 
 y : y TkPipe ifaux                      { val[0].insertaHijo(val[2]);  puts "y -> y | aifaux\n" }
-  | ifaux									              { result = ASTMultiple.new(); 
+  | ifaux									              { result = ASTMultipleProc.new(); 
                                           result.insertaHijo(val[0]); 
                                           puts "y -> ifaux\n" }
 ;
@@ -153,7 +153,7 @@ ifaux: guardia TkAsigD insts            { result = ASTBinario.new(val[0], val[2]
 
 /*Las siguientes 2 instrucciones tienen una precedencia menor a las operaciones aritmeticas */
 asignacion: x TkComa asignacion TkComa exp =VACIO1            { val[2].insertaHijo(ASTAsig.new(val[0],val[4])); puts "asignacion -> x asignacion , exp" }					 
-          | x TkAsigI exp                           =VACIO1   { result= ASTMultiple.new(); 
+          | x TkAsigI exp                           =VACIO1   { result= ASTMultipleProc.new(); 
                                                                 result.insertaHijo(ASTAsig.new(val[0],val[2])); 
                                                                 puts "asignacion -> TkId(#{val[0].value.to_s }) <-  exp" } 
 ;
@@ -172,7 +172,7 @@ invocar: TkId TkAP w TkCP           { result = ASTInvoca.new(val[0],val[2]); put
 ;
 
 w : w TkComa exp                    { val[0].insertaHijo(val[2]); puts " w -> w , exp \n" }  
-  | exp                             { result = ASTMultiple.new(); 
+  | exp                             { result = ASTMultipleProc.new(); 
                                       result.insertaHijo(val[0]); 
                                       puts "w -> exp"}
 ;
