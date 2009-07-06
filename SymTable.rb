@@ -24,16 +24,24 @@ class SymTable
 	  return @value[ind] if !(ind.nil?)
 	end
 
+	def numeroAparece(str, value)
+    cont = 0
+    @key.each_index do |x|
+       cont += 1 if (@key[x] == str && @value[x] == value)
+    end 
+    puts cont
+	  return cont
+	end
+
   def isTwice(str, value) 
-    ind1 =  @key.index(str)
-    ind2 =  @key.rindex(str)
-    value1 = @value[ind1].class
-    value2 = @value[ind2].class
-    # Para que devuelva que se encuentra duplicado, se deben cumplir 3 condiciones: 
-    # Que aparezca 2 veces en el arreglo de string. 
-    # Que pertenezcan a la misma clase. 
-    # Que sea el elemento que hemos encontrado.  
-    return  ind1!= ind2 && value1==value2 && value1.to_s == value
+    return  numeroAparece(str,value) >= 2 
+  end
+
+  def merge(symtable1, symtable2)
+    key.concat(symtable1.key)
+    key.concat(symtable2.key)
+    value.concat(symtable1.value)
+    value.concat(symtable2.value)
   end
 
 	def delete(str)

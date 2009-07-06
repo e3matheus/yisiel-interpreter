@@ -69,7 +69,7 @@ decp : decp TkVar ID TkPP tipo      { val[0].insertaHijo(ASTDec.new(val[2],val[4
 
 z : z TkComa modo TkId			  { val[0].insertaHijo(ASTParametros.new(val[2], ASTId.new(val[3]))); 
                                 puts "z -> z , modo TkId(#{ val[3].value.to_s }) \n" }
-  | modo TkId                 { result = ASTMultiple.new(); 
+  | modo TkId                 { result = ASTMultipleProc.new(); 
                                 result.insertaHijo(ASTParametros.new(val[0],ASTId.new(val[1]))); 
                                 puts "z -> modo TkId(#{ val[1].value.to_s }) \n" }
 ;

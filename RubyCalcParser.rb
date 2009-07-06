@@ -16,7 +16,7 @@ require 'excepciones'
 
 class RubyCalcParser < Racc::Parser
 
-module_eval <<'..end Parser.y modeval..ideec31eab35', 'Parser.y', 220
+module_eval <<'..end Parser.y modeval..idc0fc7a79f3', 'Parser.y', 220
 def initialize(lexer)
 @ast = nil
 @lexer = lexer
@@ -43,7 +43,7 @@ end
   def on_error(t, val, vstack)
     raise ParseError, sprintf("\nError sintactico cerca del valor %s (%s)", val.class.inspect, val.to_s || '?')
   end
-..end Parser.y modeval..ideec31eab35
+..end Parser.y modeval..idc0fc7a79f3
 
 ##### racc 1.4.5 generates ###
 
@@ -582,7 +582,7 @@ module_eval <<'.,.,', 'Parser.y', 70
 
 module_eval <<'.,.,', 'Parser.y', 73
   def _reduce_13( val, _values, result )
- result = ASTMultiple.new(); 
+ result = ASTMultipleProc.new(); 
                                 result.insertaHijo(ASTParametros.new(val[0],ASTId.new(val[1]))); 
                                 puts "z -> modo TkId(#{ val[1].value.to_s }) \n"
    result

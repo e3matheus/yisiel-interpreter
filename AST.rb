@@ -10,9 +10,9 @@ class AST
   attr_accessor :num, :sign
 	def initialize()
 	end
-  def check(symtable)
+  def check(*symtable)
   end
-  def run(symtable)
+  def run(*symtable)
   end 
 end
 
@@ -39,8 +39,8 @@ class ASTTernario < AST
 		@term3 = term3
 	end
   def check(*tabla)
-    return @term1.check
-  end
+    return @term1.check() && @term2.check() 
+  end 
 end
 
 class ASTMultiple < AST
@@ -51,9 +51,17 @@ class ASTMultiple < AST
   def insertaHijo(hijo)
     @hijos.push(hijo)
   end
-  def check(*tabla)
+  def check()
     @hijos.each do |x|
-      x.check()
+      x.check()     
+    end
+  end
+end
+
+class ASTMultipleProc < ASTMultiple
+  def check(tabla)
+    @hijos.each do |x|
+      x.check(tabla)     
     end
   end
 end
@@ -72,11 +80,13 @@ class ASTDec < ASTBinario
 
   # ESTA INENTENDIBLEEEEEEEEEEEEEEEEEEEEE........
   def check(*tabla)
+
     if (@term2.class.to_s == 'TkValue') 
       sym = 'SymVar'
     else
       sym = 'SymArray'
     end
+
     @term1.hijos.each do |hijo|
       begin
         case tabla.length
@@ -84,26 +94,28 @@ class ASTDec < ASTBinario
             bool = $tablaGlobal.isTwice(hijo.getId(), sym)
             raise DeclaracionRepetida, "Declaracion repetida en linea #{hijo.getToken().line}, columna #{hijo.getToken().col}" if bool 
           when 1 # Revisa una tabla local y la tabla global.
-            bool = $tablaGlobal.isTwice(hijo.getId(),sym) && tabla.isTwice(hijo.getId(),sym)
+            supertabla = merge($tablaGlobal,tabla)
+            bool = supertabla.isTwice(hijo.getId(),sym) 
             raise DeclaracionRepetida, "Declaracion repetida en linea #{hijo.getToken().line}, columna #{hijo.getToken().col}" if bool 
         end
       rescue DeclaracionRepetida => err
         puts "\n#{err}"
       end
     end
+
   end
 
 end
 
 class ASTMath < ASTBinario
-  def check(symtable)
+  def check(*symtable)
   end
 end
 
 class ASTSuma < ASTMath
-  def check(symtable)
-    chterm1 = @term1.check(symtable)  
-    chterm2 = @term2.check(symtable)
+  def check(*symtable)
+    chterm1 = @term1.check(*symtable)  
+    chterm2 = @term2.check(*symtable)
     if chterm1 && chterm2
       return true
     else
@@ -111,175 +123,175 @@ class ASTSuma < ASTMath
       return false
     end
   end
-  def run(symtable)
-    term1 = @term1.run(symtable)  
-    term2 = @term2.run(symtable)  
+  def run(*symtable)
+    term1 = @term1.run(*symtable)  
+    term2 = @term2.run(*symtable)  
     return term1 + term2
   end
 end
 
 class ASTResta < ASTMath
-  def check(symtable)
-    chterm1 = @term1.check(symtable)  
-    chterm2 = @term2.check(symtable)
+  def check(*symtable)
+    chterm1 = @term1.check(*symtable)  
+    chterm2 = @term2.check(*symtable)
     if chterm1 && chterm2
       return true
     else
       return false
     end
   end
-  def run(symtable) 
-    term1 = @term1.run(symtable)  
-    term2 = @term2.run(symtable)  
+  def run(*symtable) 
+    term1 = @term1.run(*symtable)  
+    term2 = @term2.run(*symtable)  
     return term1 - term2
   end
 end
 
 class ASTMult < ASTMath
-  def check(symtable)
-    chterm1 = @term1.check(symtable)  
-    chterm2 = @term2.check(symtable)
+  def check(*symtable)
+    chterm1 = @term1.check(*symtable)  
+    chterm2 = @term2.check(*symtable)
     if chterm1 && chterm2
       return true
     else
       return false
     end
   end
-  def run(symtable) 
-    term1 = @term1.run(symtable)  
-    term2 = @term2.run(symtable)  
+  def run(*symtable) 
+    term1 = @term1.run(*symtable)  
+    term2 = @term2.run(*symtable)  
     return term1 * term2
   end
 end
 
 class ASTDiv < ASTMath
-  def check(symtable)
-    chterm1 = @term1.check(symtable)  
-    chterm2 = @term2.check(symtable)
+  def check(*symtable)
+    chterm1 = @term1.check(*symtable)  
+    chterm2 = @term2.check(*symtable)
     if chterm1 && chterm2
       return true
     else
       return false
     end
   end
-  def run(symtable)
-    term1 = @term1.run(symtable)  
-    term2 = @term2.run(symtable)  
+  def run(*symtable)
+    term1 = @term1.run(*symtable)  
+    term2 = @term2.run(*symtable)  
     return term1 / term2 if term2 != 0
   end
 end
 
 class ASTResUnario < ASTUnario
   def check(symtable, symtableG)
-    chterm1 = @term1.check(symtable)  
+    chterm1 = @term1.check(*symtable)  
 	  if chterm1
 	    return true
 	  else
 	    return false
 	  end
   end
-  def run(symtable) 
-    term1 = @term1.run(symtable)  
+  def run(*symtable) 
+    term1 = @term1.run(*symtable)  
     return term1*-1 
   end
 end
 
 class ASTRes < ASTMath
-  def check(symtable)
-    chterm1 = @term1.check(symtable)  
-    chterm2 = @term2.check(symtable)
+  def check(*symtable)
+    chterm1 = @term1.check(*symtable)  
+    chterm2 = @term2.check(*symtable)
 	  if chterm1 && chterm2
 	    return true
 	  else
 	    return false
 	  end
   end
-  def run(symtable) 
-    term1 = @term1.run(symtable)  
-    term2 = @term2.run(symtable)  
+  def run(*symtable) 
+    term1 = @term1.run(*symtable)  
+    term2 = @term2.run(*symtable)  
     return term1 % term2
   end
 end
 
 class ASTBool < ASTBinario
-  def check(symtable)
+  def check(*symtable)
   end
 end
 
 class ASTConj < ASTBool
-  def run(symtable)
-    exp1 = @exp1.run(symtable)
-	  exp2 = @exp2.run(symtable)
+  def run(*symtable)
+    exp1 = @exp1.run(*symtable)
+	  exp2 = @exp2.run(*symtable)
 	  return exp1 && exp2
   end
 end
 
 class ASTDis < ASTBool
-  def run(symtable)
-    exp1 = @exp1.run(symtable)
-	  exp2 = @exp2.run(symtable)
+  def run(*symtable)
+    exp1 = @exp1.run(*symtable)
+	  exp2 = @exp2.run(*symtable)
 	  return exp1 || exp2
   end
 end
   
 class ASTNeg < ASTUnario
-  def run(symtable)
-    exp1 = @exp1.run(symtable)
+  def run(*symtable)
+    exp1 = @exp1.run(*symtable)
 	  return !exp1
   end
 end
 
 class ASTLess < ASTBool
-  def run(symtable)
-    term1 = @term1.run(symtable)
-	  term2 = @term2.run(symtable)
+  def run(*symtable)
+    term1 = @term1.run(*symtable)
+	  term2 = @term2.run(*symtable)
 	  return term1 < term2
   end
 end
   
 class ASTLeq < ASTBool
-  def run(symtable)
-    term1 = @term1.run(symtable)
-	  term2 = @term2.run(symtable)
+  def run(*symtable)
+    term1 = @term1.run(*symtable)
+	  term2 = @term2.run(*symtable)
 	  return term1 <= term2
   end
 end
 
 class ASTGreat < ASTBool
-  def run(symtable)
-    term1 = @term1.run(symtable)
-	  term2 = @term2.run(symtable)
+  def run(*symtable)
+    term1 = @term1.run(*symtable)
+	  term2 = @term2.run(*symtable)
 	  return term1 > term2
   end
 end
   
 class ASTGeq < ASTBool
-  def run(symtable)
-    term1 = @term1.run(symtable)
-	  term2 = @term2.run(symtable)
+  def run(*symtable)
+    term1 = @term1.run(*symtable)
+	  term2 = @term2.run(*symtable)
 	  return term1 >= term2
   end
 end
   
 class ASTEqual < ASTBool
-  def run(symtable)
-    term1 = @term1.run(symtable)
-	  term2 = @term2.run(symtable)
+  def run(*symtable)
+    term1 = @term1.run(*symtable)
+	  term2 = @term2.run(*symtable)
 	  return term1 == term2
   end
 end
  
 class ASTDif < ASTBool
-  def run(symtable)
-    term1 = @term1.run(symtable)
-	  term2 = @term2.run(symtable)
+  def run(*symtable)
+    term1 = @term1.run(*symtable)
+	  term2 = @term2.run(*symtable)
 	  return term1 != term2
   end
 end 
 
 # Nuevos Arboles
 
-class ASTDecTotal < ASTMultiple
+class ASTDecTotal < ASTMultipleProc
   attr_accessor :tablaProc
   def initialize() 
     @tablaProc = SymTable.new()
@@ -288,38 +300,66 @@ class ASTDecTotal < ASTMultiple
 end
 
 class ASTProc < ASTMultiple
+  attr_accessor :tabla, :parametros
   def initialize(term1,term2, term3, term4, term5, term6)
  
     # Crear la tabla y se le pasa el arbol.    
-    tabla = term4.tablaProc
+    @tabla = term4.tablaProc
     arbol = term6
 
     # Insertar Valores en la tabla.
     # term3 son los parametros pasados a la tabla
-    term3.hijos.each do |hijo|
+    @parametros = term3
+    parametros.hijos.each do |hijo|
       if (hijo.getModo() == 'in') 
-        tabla.insert(hijo.getId(), ParIn.new(hijo.getId(), hijo.getToken().line, hijo.getToken().col)) 
+        @tabla.insert(hijo.getId(), ParIn.new(hijo.getId(), hijo.getToken().line, hijo.getToken().col)) 
       else
-        tabla.insert(hijo.getId(), ParOut.new(hijo.getId(), hijo.getToken.line, hijo.getToken().col))
+        @tabla.insert(hijo.getId(), ParOut.new(hijo.getId(), hijo.getToken.line, hijo.getToken().col))
       end
     end    
 
     # Insertar procedimiento en la Tabla de Simbolos Global.
-    simbolo = SymProc.new(term2.value, term1.line, term1.col, arbol, tabla)
+    simbolo = SymProc.new(term2.value, term1.line, term1.col, arbol, @tabla)
     $tablaGlobal.insert(term2.value,simbolo)
+  end
+
+  def check()
+    superTabla = SymTable.new()
+    superTabla.merge(@tabla,$tablaGlobal)
+#    puts "te lo mando con #{$tablaGlobal.key.size} elementos"
+    return @parametros.check(superTabla)
   end
 end
 
 class ASTParametros < ASTBinario
+
   def getModo()
     return @term1.value.to_s
   end
+
   def getId()
     return @term2.value.to_s
   end
+
   def getToken()
     return @term1
   end
+
+  def check(tabla)
+    if getModo == "Out" 
+      sym = 'ParOut'    
+    else  
+      sym = 'ParIn'  
+    end
+    begin
+      bool = tabla.isTwice(getId(), sym)  
+      raise DeclaracionRepetida, "Declaracion repetida en linea #{getToken().line}, columna #{getToken().col}" if bool  
+    rescue DeclaracionRepetida => err
+      puts "\n#{err}"
+    end
+   return 
+  end
+
 end
 
 class ASTNum < ASTUnario
@@ -327,10 +367,10 @@ class ASTNum < ASTUnario
    return @term1.value 
   end
   # si es un numero no hay ningun problema
-  def check(symtable)
+  def check(*symtable)
     return true
   end
-  def run(symtable)
+  def run(*symtable)
    return @term1.value 
   end
 end 
@@ -349,7 +389,7 @@ class ASTId < ASTUnario
     return 0
   end
 
-  def check(symtable)
+  def check(*symtable)
     # se chequea que haya sido declarada
     elem = $tablaGlobal.find(@term1.value)
     elem2 = symtable.find(@term1.value)
@@ -373,7 +413,7 @@ class ASTArray < ASTBinario
   def getPosicion()
     return @term2.value
   end
-  def check(symtable)
+  def check(*symtable)
     # se chequea que haya sido declarada
     elem = $tablaGlobal.find(@term1.value)
 	# se debe chequear que no se use una variable como un arreglo
