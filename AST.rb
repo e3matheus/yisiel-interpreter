@@ -21,6 +21,9 @@ class ASTUnario < AST
 	def initialize(exp)
 		@term1 = exp
 	end
+  def check(symtable, symtableG)
+    @term1.check(symtable)  
+  end
 end 
 
 class ASTBinario < AST
@@ -29,6 +32,10 @@ class ASTBinario < AST
 		@term1 = term1
 		@term2 = term2
 	end
+  def check(*symtable)
+    @term1.check(*symtable)  
+    @term2.check(*symtable)
+  end
 end
 
 class ASTTernario < AST
@@ -38,8 +45,11 @@ class ASTTernario < AST
 		@term2 = term2
 		@term3 = term3
 	end
+
   def check(*tabla)
-    return @term1.check() && @term2.check() && @term3.check($tablaGlobal)
+    @term1.check()
+    @term2.check()
+    @term3.check($tablaGlobal)
   end 
 end
 
@@ -117,7 +127,7 @@ class ASTSuma < ASTMath
   def run(*symtable)
     term1 = @term1.run(*symtable) 
     term2 = @term2.run(*symtable) 	
-    return term1 + term2
+   return term1 + term2
   end
 end
 
@@ -125,7 +135,7 @@ class ASTResta < ASTMath
   def run(*symtable) 
     term1 = @term1.run(*symtable)  
     term2 = @term2.run(*symtable)  
-    return term1 - term2
+   return term1 - term2
   end
 end
 
@@ -133,7 +143,7 @@ class ASTMult < ASTMath
   def run(*symtable) 
     term1 = @term1.run(*symtable)  
     term2 = @term2.run(*symtable)  
-    return term1 * term2
+   return term1 * term2
   end
 end
 
@@ -141,7 +151,7 @@ class ASTDiv < ASTMath
  def run(*symtable)
     term1 = @term1.run(*symtable)  
     term2 = @term2.run(*symtable)  
-    return term1 / term2 if term2 != 0
+   return term1 / term2 if term2 != 0
   end
 end
 
@@ -151,7 +161,7 @@ class ASTResUnario < ASTUnario
   end
   def run(*symtable) 
     term1 = @term1.run(*symtable)  
-    return term1*-1 
+   return term1*-1 
   end
 end
 
@@ -159,33 +169,22 @@ class ASTRes < ASTMath
  def run(*symtable) 
     term1 = @term1.run(*symtable)  
     term2 = @term2.run(*symtable)  
-    return term1 % term2
+   return term1 % term2
   end
 end
 
 class ASTBool < ASTBinario
-  def check(*symtable)
-  end
 end
 
 class ASTConj < ASTBool
- def check(*symtable)
-    @term1.check(*symtable)  
-    @term2.check(*symtable)
-  end
-  def run(*symtable)
+ def run(*symtable)
     term1 = @term1.run(*symtable)
 	term2 = @term2.run(*symtable)
-	return term1 && term2
   end
 end
 
 class ASTDis < ASTBool
- def check(*symtable)
-    @term1.check(*symtable)  
-    @term2.check(*symtable)
-  end
-  def run(symtable)
+ def run(symtable)
     term1 = @term1.run(*symtable)
 	term2 = @term2.run(*symtable)
 	return term1 || term2
@@ -193,84 +192,57 @@ class ASTDis < ASTBool
 end
   
 class ASTNeg < ASTUnario
- def check(*symtable)
-    @term1.check(*symtable)  
-  end
-  def run(*symtable)
+ def run(*symtable)
     term1 = @term1.run(*symtable)
 	  return !term1
   end
 end
 
 class ASTLess < ASTBool
- def check(*symtable)
-    @term1.check(*symtable)  
-    @term2.check(*symtable)
-  end
-  def run(*symtable)
+ def run(*symtable)
     term1 = @term1.run(*symtable)
 	term2 = @term2.run(*symtable)
-	  return term1 < term2
+  return term1 < term2
   end
 end
   
 class ASTLeq < ASTBool
- def check(*symtable)
-    @term1.check(*symtable)  
-    @term2.check(*symtable)
-  end
-  def run(*symtable)
+ def run(*symtable)
     term1 = @term1.run(*symtable)
 	term2 = @term2.run(*symtable)
-	  return term1 <= term2
+  return term1 <= term2
   end
 end
 
 class ASTGreat < ASTBool
- def check(*symtable)
-    @term1.check(*symtable)  
-    @term2.check(*symtable)
-  end
-  def run(*symtable)
+ def run(*symtable)
     term1 = @term1.run(*symtable)
 	term2 = @term2.run(*symtable)
-	  return term1 > term2
+  return term1 > term2
   end
 end
   
 class ASTGeq < ASTBool
- def check(*symtable)
-    @term1.check(*symtable)  
-    @term2.check(*symtable)
-  end
-  def run(*symtable)
+ def run(*symtable)
     term1 = @term1.run(*symtable)
 	term2 = @term2.run(*symtable)
-	  return term1 >= term2
+  return term1 >= term2
   end
 end
   
 class ASTEqual < ASTBool
- def check(*symtable)
-    @term1.check(*symtable)  
-    @term2.check(*symtable)
-  end
-  def run(*symtable)
+ def run(*symtable)
     term1 = @term1.run(*symtable)
 	term2 = @term2.run(*symtable)
-	  return term1 == term2
+  return term1 == term2
   end
 end
  
 class ASTDif < ASTBool
- def check(*symtable)
-    @term1.check(*symtable)  
-    @term2.check(*symtable)
-  end
-  def run(*symtable)
+ def run(*symtable)
     term1 = @term1.run(*symtable)
 	term2 = @term2.run(*symtable)
-	  return term1 != term2
+  return term1 != term2
   end
 end 
 
@@ -464,33 +436,33 @@ end
 
 class ASTInvoca < ASTBinario
   def check(*tabla)
-  begin
-    # Se chequea si el procedimiento esta en la tabla de simbolo.
-    elem = tabla[0].find(@term1.value, 'SymProc')
-    raise ErrdeTipo, "No se encontro el procedimiento '#{@term1.value}'. Error en la linea #{@term1.line}, columna #{@term1.col}.\n" if elem.nil?
-    parametros = elem[0].symtables[0]
-    
-    # Chequeo de Numero de Parametros.
-    list = Array.new
-    parametros.key.each_index do |x|
-      t = parametros.value[x]
-      list.push(t) if t.class.to_s == 'ParIn' || t.class.to_s == 'ParOut'
-    end
-    raise NumParametrosInvalidos, "El numero de parametros del procedimientos, es distinto al esperado." if list.length != @term2.hijos.length         
-
-    # Chequeo de Parametros out de la invocacion.
-    list.each_index do |x|
-      if list[x].class.to_s == 'ParOut'
-        raise OutError,"El valor utilizado en la variable de out debe ser un identificador. La variable esta en la linea #{@term1.line} y columna #{@term1.col}." if  @term2.hijos[x].class.to_s !='ASTId' && @term2.hijos[x].class.to_s !='ASTArray'
+    begin
+      # Se chequea si el procedimiento esta en la tabla de simbolo.
+      elem = tabla[0].find(@term1.value, 'SymProc')
+      raise ErrdeTipo, "No se encontro el procedimiento '#{@term1.value}'. Error en la linea #{@term1.line}, columna #{@term1.col}.\n" if elem.nil?
+      parametros = elem[0].symtables[0]
+      
+      # Chequeo de Numero de Parametros.
+      list = Array.new
+      parametros.key.each_index do |x|
+        t = parametros.value[x]
+        list.push(t) if t.class.to_s == 'ParIn' || t.class.to_s == 'ParOut'
       end
+      raise NumParametrosInvalidos, "El numero de parametros del procedimientos, es distinto al esperado." if list.length != @term2.hijos.length         
+
+      # Chequeo de Parametros out de la invocacion.
+      list.each_index do |x|
+        if list[x].class.to_s == 'ParOut'
+          raise OutError,"El valor utilizado en la variable de out debe ser un identificador. La variable esta en la linea #{@term1.line} y columna #{@term1.col}." if  @term2.hijos[x].class.to_s !='ASTId' && @term2.hijos[x].class.to_s !='ASTArray'
+        end
+      end
+    rescue ErrdeTipo => err
+        puts "\n#{err}"
+    rescue NumParametrosInvalidos => err
+        puts "\n#{err}"
+    rescue OutError => err
+        puts "\n#{err}"
     end
-  rescue ErrdeTipo => err
-      puts "\n#{err}"
-  rescue NumParametrosInvalidos => err
-      puts "\n#{err}"
-  rescue OutError => err
-      puts "\n#{err}"
-  end
-    
+      
   end  
 end

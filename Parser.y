@@ -186,7 +186,7 @@ auxmostrar:  exp               =VACIO1     { puts "mostrar -> show exp" }
 ;
 
 exp : exp TkPlus exp       { result = ASTSuma.new(val[0], val[2]);      puts "exp -> exp + exp\n" }
-    | exp TkMinus exp      { result = ASTResta.new(val[0], val[2]);     puts "exp -> exp - exp\n" }
+   | exp TkMinus exp      { result = ASTResta.new(val[0], val[2]);     puts "exp -> exp - exp\n" }
     | exp TkTimes exp      { result = ASTMult.new(val[0], val[2]);      puts "exp -> exp * exp\n" }
     | exp TkDiv exp        { result = ASTDiv.new(val[0], val[2]);       puts "exp -> exp / exp\n" }
     | exp TkRes exp        { result = ASTRes.new(val[0], val[2]);       puts "exp -> exp % exp\n" }
@@ -198,7 +198,7 @@ exp : exp TkPlus exp       { result = ASTSuma.new(val[0], val[2]);      puts "ex
     | TkLength TkId        { result = ASTLength.new(ASTId,new(val[1]));            puts "exp -> $ TkId(#{val[0].value.to_s})\n" }
 ;
 
-guardia : guardia TkConj booleano       { result = ASTConj.new(val[0], val[2]); result.check($tablaGlobal); puts "guardia -> guardia && booleano" }
+guardia : guardia TkConj booleano       { result = ASTConj.new(val[0], val[2]); puts "guardia -> guardia && booleano" }
         | guardia TkDisy booleano       { result = ASTDisy.new(val[0], val[2]); puts "guardia -> guardia || booleano" }
         | TkNeg guardia                 { result = ASTNeg.new(val[1]);          puts "guardia -> ~ guardia" }
         | booleano                      { puts "guardia -> booleano"}
