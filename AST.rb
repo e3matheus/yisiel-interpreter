@@ -102,7 +102,6 @@ class ASTDec < ASTBinario
         puts "\n#{err}"
       end
     end
-
   end
 
 end

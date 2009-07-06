@@ -1,4 +1,4 @@
-var c, c : value
+var c, t : value
 var c : array of 3
 proc procedimiento1(in a, in b, out c) as var t, t : array of 3
 begin

@@ -27,9 +27,8 @@ class SymTable
 	def numeroAparece(str, value)
     cont = 0
     @key.each_index do |x|
-       cont += 1 if (@key[x] == str && @value[x] == value)
+       cont += 1 if (@key[x] == str && @value[x].class.to_s== value)
     end 
-    puts cont
 	  return cont
 	end
 
