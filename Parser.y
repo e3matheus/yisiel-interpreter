@@ -185,7 +185,7 @@ auxmostrar:  exp               =VACIO1     { puts "mostrar -> show exp" }
           |  TkStr             
 ;
 
-exp : exp TkPlus exp       { result = ASTSuma.new(val[0], val[2]);      puts "exp -> exp +exp\n" }
+exp : exp TkPlus exp       { result = ASTSuma.new(val[0], val[2]);      result.check($tablaGlobal)}
     | exp TkMinus exp      { result = ASTResta.new(val[0], val[2]);     puts "exp -> exp - exp\n" }
     | exp TkTimes exp      { result = ASTMult.new(val[0], val[2]);      puts "exp -> exp * exp\n" }
     | exp TkDiv exp        { result = ASTDiv.new(val[0], val[2]);       puts "exp -> exp / exp\n" }
@@ -195,7 +195,7 @@ exp : exp TkPlus exp       { result = ASTSuma.new(val[0], val[2]);      puts "ex
     | TkNum                { result = ASTNum.new(val[0]);            puts "exp -> TkNum(#{val[0].value.to_s })\n" }
     | TkId                 { result = ASTId.new(val[0]);            puts "exp -> TkId(#{val[0].value.to_s})\n" }
     | TkId TkAC exp TkCC   { result = ASTArray.new(val[0], val[2]);     puts "exp -> TkId(#{val[0].value.to_s})[exp]\n" }
-    | TkLength TkId        { result = ASTLength.new(val[1]);            puts "exp -> $ TkId(#{val[0].value.to_s})\n" }
+    | TkLength TkId        { result = ASTLength.new(ASTId,new(val[1]));            puts "exp -> $ TkId(#{val[0].value.to_s})\n" }
 ;
 
 guardia : guardia TkConj booleano       { result = ASTConj.new(val[0], val[2]); puts "guardia -> guardia && booleano" }

@@ -43,3 +43,12 @@ end
 # Descripción: Excepción que maneja cuando se intenta invocar un procedimiento con una variable de out, como numero o posicion de un arreglo.
 class OutError < RuntimeError
 end
+
+# Descripción: Excepción que maneja los errores de utilizacion de tipo
+class ErrdeTipo < RuntimeError
+end
+
+# Descripción: Excepción que maneja los errores cuando no se declara una variable usada en el programa
+class VarNoDec < RuntimeError
+end
+

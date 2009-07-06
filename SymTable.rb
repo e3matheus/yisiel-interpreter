@@ -19,35 +19,41 @@ class SymTable
     @value.push(symbol)
 	end
 
-	def find(str)
-    ind =  @key.index(str)
-	  return @value[ind] if !(ind.nil?)
+=begin
+	def find(str) 
+	  if @key.index(str).nil?
+        return nil
+      else		
+	    return @value[@key.index(str)]
+	  end
 	end
+=end
 
-	def numeroAparece(str, *value)
-    cont = 0
+	def find(str, *value)
+    cont = Array.new
     @key.each_index do |x|
       case value.length
         when 0  # Chequeo cuando son los parametros de un procedimiento
-          cont += 1 if (@key[x] == str)
+          cont.push(@value[x]) if (@key[x] == str)
         else    # Resto de los Chequeos.
-          cont += 1 if (@key[x] == str && @value[x].class.to_s== value[0])
+          cont.push(@value[x]) if (@key[x] == str && @value[x].class.to_s== value[0])
       end
     end 
+    return nil if cont.length == 0
 	  return cont
 	end
 
   def isTwice(str, *value) 
     case value.length
       when 0 # Chequeo para los parametros dentro de un procedimiento. No hay distincion, no pueden haber dos variables in y out con el mismo nombre
-        return  numeroAparece(str) >= 2 
+        return  find(str).length >= 2 
       else
-        return  numeroAparece(str, value[0]) >= 2 
+        return  find(str, value[0]).length >= 2 
       end
   end
 
   def contiene?(str, symbol)
-    return numeroAparece(str,symbol) >=1
+    return find(str,symbol).length >=1
   end
 
   def merge(symtable1, symtable2)
