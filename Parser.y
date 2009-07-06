@@ -125,7 +125,7 @@ ppal: TkMain instrucciones TkEnd        { result = val[1]; puts "ppal -> main in
 ;
 
 instrucciones : instrucciones TkPC insts              { val[0].insertaHijo(val[2]); puts "ppal -> instrucciones ; insts \n" }
-              | insts                                 { result = ASTMultiple.new(); 
+              | insts                                 { result = ASTMultipleProc.new(); 
                                                         result.insertaHijo(val[0]); 
                                                         puts "instrucciones -> insts\n" } /* Debe existir por lo menos una instruccion en el main */
 ;

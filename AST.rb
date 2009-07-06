@@ -39,7 +39,7 @@ class ASTTernario < AST
 		@term3 = term3
 	end
   def check(*tabla)
-    return @term1.check() && @term2.check() 
+    return @term1.check() && @term2.check() && @term3.check($tablaGlobal)
   end 
 end
 
