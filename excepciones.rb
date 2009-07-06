@@ -27,3 +27,11 @@ end
 # Descripción: Excepción que maneja cuando una variable declarada in se intenta asignar.
 class VariableSoloLectura < RuntimeError
 end
+
+# Descripción: Excepción que maneja cuando una variable declarada out se intenta leer.
+class VariableSoloEscritura < RuntimeError
+end
+
+# Descripción: Excepción que maneja cuando se intenta hacer una operacion con el tipo de variable equivocado.
+class TipoEquivocado < RuntimeError
+end

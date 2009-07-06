@@ -388,16 +388,39 @@ class ASTId < ASTUnario
     return 0
   end
 
-  def check(symtable)
-    # se chequea que haya sido declarada
-    elem = symtable.find(@term1.value)
+  def check(*symtable)
+    case symtable[1]
+    when 2
+      begin
+        # se chequea que haya sido declarada
+        elem = symtable[0].find(@term1.value)
 
-	  # se debe chequear que no se use un arreglo como una variable
-	  if elem.class.to_s == "SymVar"
-	    return true
-	  else 
-	    return false
-	  end
+        # se debe chequear que no se use un arreglo como una variable
+        if elem.class.to_s == "SymVar" || elem.class.to_s == "ParIn"
+          return true
+        elsif elem.class.to_s == "ParOut"
+          raise VariableSoloEscritura, "La variable es de solo escritura. La variable esta en la linea #{getToken().line}, y columna #{getToken().col}"
+        else 
+          raise TipoEquivocado, "El tipo no es el adecuado. La variable esta en la linea #{getToken().line}, y columna #{getToken().col}"
+        end
+      rescue VariableSoloEscritura => err
+        puts "\n#{err}"
+      rescue TipoEquivocado => err
+        puts "\n#{err}"
+      end
+    when 1
+      begin
+        # Chequeo si es ParIn
+        if  @term1.class.to_s == "ASTId"
+          bool = tabla.contiene?(@term1.getId(), "ParIn")
+          raise VariableSoloLectura, "La variable es de solo lectura. Se encuentra en la linea #{@term1.getToken.line()}, columna #{@term1.getToken().col}." if bool
+        end
+      rescue VariableSoloLectura => err
+        puts err
+      end
+    end
+
+
   end
 
 end
@@ -422,7 +445,7 @@ class ASTArray < ASTBinario
 	  if elem.class.to_s == "SymArray"
 	    return true
 	  else 
-	    return false
+	    raise TipoEquivocado, "El tipo no es el adecuado. La variable esta en la linea #{getToken().line}, y columna #{getToken().col}"
 	  end
   end
 end
@@ -430,18 +453,9 @@ end
 class ASTAsig < ASTBinario
 
   def check(tabla)
-    term1 = @term1.check(tabla)
-    term2 = @term2.check(tabla)
+    @term1.check(tabla, 1)
+    @term2.check(tabla, 2)
     
-    begin
-      # Chequeo si es ParIn
-      if  @term1.class.to_s == "ASTId"
-        bool = tabla.contiene?(@term1.getId(), "ParIn")
-        raise VariableSoloLectura, "La variable es de solo lectura. Se encuentra en la linea #{@term1.getToken.line()}, columna #{@term1.getToken().col}." if bool
-      end
-    rescue VariableSoloLectura => err
-      puts err
-    end
   end
 
   def run(tabla)
