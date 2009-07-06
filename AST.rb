@@ -464,3 +464,30 @@ class ASTAsig < ASTBinario
     $tablaGlobal.replace(@term1.getId(), variable) 
   end 
 end 
+
+# Mas arboles Nuevos.
+class ASTInvoca < ASTBinario
+  def check(*tabla)
+  begin
+    elem = tabla[0].find(@term1.value)
+	  if elem.class.to_s == "SymProc"
+      parametros = elem.symtables[0]
+      list = Array.new
+      parametros.key.each_index do |x|
+        t = parametros.value[x]
+        list.push(t) if t.class.to_s == 'ParIn' || t.class.to_s == 'ParOut'
+      end
+      raise NumParametrosInvalidos, "El numero de parametros del procedimientos, es distinto al esperado." if list.length != @term2.hijos.length         
+      list.each do |x|
+      end
+	  else 
+	    raise TipoEquivocado, "El tipo no es el adecuado. La variable esta en la linea #{getToken().line}, y columna #{getToken().col}"
+	  end
+  rescue TipoEquivocado => err
+      puts "\n#{err}"
+  rescue NumParametrosInvalidos => err
+      puts "\n#{err}"
+  end
+    
+  end  
+end

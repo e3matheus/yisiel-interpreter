@@ -81,7 +81,7 @@ modo : TkIn                        { puts "modo -> TkIn\n" }
 instsp  :  TkSkip                         { result = ASTUnario.new(val[0]); puts "instsp -> skip\n" }
 		    |  TkReturn                       { result = ASTUnario.new(val[0]); puts "instsp -> TkReturn\n" } 
 		    |  seleccionp                     { puts "instsp -> seleccionp\n" }
-		    |  asignacionp                     { puts "instsp -> asignacion\n"}
+		    |  asignacionp                    { puts "instsp -> asignacion\n"}
 		    |  repeticionp                    { puts "instsp -> repeticionp\n"}
 		    |  bloquep                        { puts "instsp -> bloquep\n"}
 		    |  invocar                        { puts "instsp -> invocar\n"}
@@ -168,7 +168,7 @@ repeticion: TkDo y TkOd                 { result = val[0]; puts "repeticion -> d
 bloque: TkBegin instrucciones TkEnd     { result = val[1]; puts "bloque -> begin instrucciones end" }
 ;
 
-invocar: TkId TkAP w TkCP           { result = ASTBinario.new(val[0],val[2]); puts "invocar -> TkId(#{ val[0].value.to_s }) ( w ) \n"}
+invocar: TkId TkAP w TkCP           { result = ASTInvoca.new(val[0],val[2]); puts "invocar -> TkId(#{ val[0].value.to_s }) ( w ) \n"}
 ;
 
 w : w TkComa exp                    { val[0].insertaHijo(val[2]); puts " w -> w , exp \n" }  

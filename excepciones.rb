@@ -35,3 +35,11 @@ end
 # Descripción: Excepción que maneja cuando se intenta hacer una operacion con el tipo de variable equivocado.
 class TipoEquivocado < RuntimeError
 end
+
+# Descripción: Excepción que maneja cuando se intenta hacer llamar el procedimiento con una cantidad invalida de parametros.
+class NumParametrosInvalidos < RuntimeError
+end
+
+# Descripción: Excepción que maneja cuando se intenta invocar un procedimiento con una variable de out, como numero o posicion de un arreglo.
+class OutError < RuntimeError
+end
