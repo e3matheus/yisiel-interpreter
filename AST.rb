@@ -93,7 +93,7 @@ class ASTDec < ASTBinario
           when 0 # Revisa Solo la Tabla Global.
             bool = $tablaGlobal.isTwice(hijo.getId(), sym)
             raise DeclaracionRepetida, "Declaracion repetida en linea #{hijo.getToken().line}, columna #{hijo.getToken().col}" if bool 
-          when 1 # Revisa una tabla local y la tabla global.
+         when 1 # Revisa una tabla local y la tabla global.
             supertabla = SymTable.new()
             supertabla.merge($tablaGlobal,*tabla)
             bool = supertabla.isTwice(hijo.getId(),sym) 

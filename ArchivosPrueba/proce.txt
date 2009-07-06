@@ -1,6 +1,6 @@
 var c, t : value
 var c : array of 3
-proc proc1(in a, in c, out d) as begin proc2(2,3,c); return end
+proc proc1(in a, in c, out d) as begin x <- 1+2; proc2(2,3,c); return end
 proc proc2(in a2, in b2, out c2) as var t : array of 3 begin c <- 1 + 2; return end
 main
 show i-j

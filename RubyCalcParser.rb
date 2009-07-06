@@ -16,7 +16,7 @@ require 'excepciones'
 
 class RubyCalcParser < Racc::Parser
 
-module_eval <<'..end Parser.y modeval..idf7e61bb90b', 'Parser.y', 227
+module_eval <<'..end Parser.y modeval..id78a6bf99b2', 'Parser.y', 227
 def initialize(lexer)
 @ast = nil
 @lexer = lexer
@@ -43,7 +43,7 @@ end
   def on_error(t, val, vstack)
     raise ParseError, sprintf("\nError sintactico cerca del valor %s (%s)", val.class.inspect, val.to_s || '?')
   end
-..end Parser.y modeval..idf7e61bb90b
+..end Parser.y modeval..id78a6bf99b2
 
 ##### racc 1.4.5 generates ###
 
