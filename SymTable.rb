@@ -46,6 +46,10 @@ class SymTable
       end
   end
 
+  def contiene?(str, symbol)
+    return numeroAparece(str,symbol) >=1
+  end
+
   def merge(symtable1, symtable2)
     key.concat(symtable1.key)
     key.concat(symtable2.key)

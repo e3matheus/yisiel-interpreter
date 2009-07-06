@@ -1,15 +1,7 @@
 var c, t : value
 var c : array of 3
-proc procedimiento1(in a, in c, out a) as var d, d : array of 3 var d :value
-begin
-c <- 1 + 2;
-return
-end
-proc procedimiento2(in a2, in b2, out c2) as var t : array of 3
-begin
-c <- 1 + 2;
-return
-end
+proc procedimiento1(in a, in c, out d) as begin c <- 1 + 2; a <- 2+4; return end
+proc procedimiento2(in a2, in b2, out c2) as var t : array of 3 begin c <- 1 + 2; return end
 main
 show i-j
 end

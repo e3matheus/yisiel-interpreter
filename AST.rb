@@ -300,18 +300,20 @@ class ASTDecTotal < ASTMultipleProc
 end
 
 class ASTProc < ASTMultiple
-  attr_accessor :tabla, :parametros, :locales
-  def initialize(term1,term2, term3, locales, term5, term6) 
+  attr_accessor :tabla, :parametros, :locales, :instrucciones
+  def initialize(term1,term2, parametros, locales, instrucciones) 
     @locales = locales
+    @instrucciones = instrucciones
 
+    puts @instrucciones.hijos[0].class
     # Crear la tabla y se le pasa el arbol.    
     @tabla = locales.tablaProc
-    arbol = term6
+    arbol = @instrucciones
 
     # Insertar Valores en la tabla.
-    # term3 son los parametros pasados a la tabla
-    @parametros = term3
-    parametros.hijos.each do |hijo|
+    # parametros son los parametros pasados a la tabla
+    @parametros = parametros
+    @parametros.hijos.each do |hijo|
       if (hijo.getModo() == 'in') 
         @tabla.insert(hijo.getId(), ParIn.new(hijo.getId(), hijo.getToken().line, hijo.getToken().col)) 
       else
@@ -325,9 +327,9 @@ class ASTProc < ASTMultiple
   end
 
   def check()
-    superTabla = SymTable.new()
-    superTabla.merge(@tabla,$tablaGlobal)
-    return @parametros.check(@tabla) && @locales.check(@tabla) 
+    supertabla = SymTable.new()
+    supertabla.merge(@tabla,$tablaGlobal)
+    return @parametros.check(@tabla) && @locales.check(@tabla) && @instrucciones.check(supertabla) 
   end
 end
 
@@ -346,13 +348,15 @@ class ASTParametros < ASTBinario
   end
 
   def check(tabla)
-   begin
-      bool = tabla.isTwice(getId())  
-      raise DeclaracionRepetida, "Declaracion repetida en linea #{getToken().line}, columna #{getToken().col}" if bool  
+    begin
+      bool = tabla.isTwice(getId())
+      if (bool) 
+        raise DeclaracionRepetida, "Declaracion repetida en linea #{getToken().line}, columna #{getToken().col}."  
+      end
+      return bool 
     rescue DeclaracionRepetida => err
       puts "\n#{err}"
     end
-   return 
   end
 
 end
@@ -384,12 +388,12 @@ class ASTId < ASTUnario
     return 0
   end
 
-  def check(*symtable)
+  def check(symtable)
     # se chequea que haya sido declarada
-    elem = $tablaGlobal.find(@term1.value)
-    elem2 = symtable.find(@term1.value)
+    elem = symtable.find(@term1.value)
+
 	  # se debe chequear que no se use un arreglo como una variable
-	  if elem.class.to_s == "SymVar" ||  elem2.class.to_s == "SymVar"
+	  if elem.class.to_s == "SymVar"
 	    return true
 	  else 
 	    return false
@@ -402,29 +406,44 @@ class ASTArray < ASTBinario
   def value()
    return @term1.value 
   end
+  def getToken()
+    return @term1
+  end
   def getId()
     return @term1.value
   end
   def getPosicion()
     return @term2.value
   end
-  def check(*symtable)
+  def check(symtable)
     # se chequea que haya sido declarada
-    elem = $tablaGlobal.find(@term1.value)
-	# se debe chequear que no se use una variable como un arreglo
-	if elem.class.to_s == "SymArray"
-	  return true
-	else 
-	  return false
-	end
+    elem = symtable.find(@term1.value)
+	  # se debe chequear que no se use una variable como un arreglo
+	  if elem.class.to_s == "SymArray"
+	    return true
+	  else 
+	    return false
+	  end
   end
 end
 
 class ASTAsig < ASTBinario
+
   def check(tabla)
-    variable = $tablaGlobal.find(@term1.getId())
-    puts "No esta declarada la variable..." if variable.nil?
+    term1 = @term1.check(tabla)
+    term2 = @term2.check(tabla)
+    
+    begin
+      # Chequeo si es ParIn
+      if  @term1.class.to_s == "ASTId"
+        bool = tabla.contiene?(@term1.getId(), "ParIn")
+        raise VariableSoloLectura, "La variable es de solo lectura. Se encuentra en la linea #{@term1.getToken.line()}, columna #{@term1.getToken().col}." if bool
+      end
+    rescue VariableSoloLectura => err
+      puts err
+    end
   end
+
   def run(tabla)
     variable = $tablaGlobal.find(@term1.getId())
     variable.setValue(@term1.getPosicion(), @term2.run('e')) 
