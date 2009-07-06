@@ -478,7 +478,10 @@ class ASTInvoca < ASTBinario
         list.push(t) if t.class.to_s == 'ParIn' || t.class.to_s == 'ParOut'
       end
       raise NumParametrosInvalidos, "El numero de parametros del procedimientos, es distinto al esperado." if list.length != @term2.hijos.length         
-      list.each do |x|
+      list.each_index do |x|
+        if list[x].class.to_s == 'ParOut'
+          raise OutError,"El valor utilizado en la variable de out debe ser un identificador. La variable esta en la linea #{list[x].line} y columna #{list[x].col}." if  @term2.hijos[x].class.to_s !='ASTId' && @term2.hijos[x].class.to_s !='ASTArray'
+        end
       end
 	  else 
 	    raise TipoEquivocado, "El tipo no es el adecuado. La variable esta en la linea #{getToken().line}, y columna #{getToken().col}"
@@ -486,6 +489,8 @@ class ASTInvoca < ASTBinario
   rescue TipoEquivocado => err
       puts "\n#{err}"
   rescue NumParametrosInvalidos => err
+      puts "\n#{err}"
+  rescue OutError => err
       puts "\n#{err}"
   end
     
