@@ -185,7 +185,7 @@ auxmostrar:  exp               =VACIO1     { puts "mostrar -> show exp" }
           |  TkStr             
 ;
 
-exp : exp TkPlus exp       { result = ASTSuma.new(val[0], val[2]);      result.check($tablaGlobal)}
+exp : exp TkPlus exp       { result = ASTSuma.new(val[0], val[2]);      puts "exp -> exp + exp\n" }
     | exp TkMinus exp      { result = ASTResta.new(val[0], val[2]);     puts "exp -> exp - exp\n" }
     | exp TkTimes exp      { result = ASTMult.new(val[0], val[2]);      puts "exp -> exp * exp\n" }
     | exp TkDiv exp        { result = ASTDiv.new(val[0], val[2]);       puts "exp -> exp / exp\n" }
@@ -198,7 +198,7 @@ exp : exp TkPlus exp       { result = ASTSuma.new(val[0], val[2]);      result.c
     | TkLength TkId        { result = ASTLength.new(ASTId,new(val[1]));            puts "exp -> $ TkId(#{val[0].value.to_s})\n" }
 ;
 
-guardia : guardia TkConj booleano       { result = ASTConj.new(val[0], val[2]); puts "guardia -> guardia && booleano" }
+guardia : guardia TkConj booleano       { result = ASTConj.new(val[0], val[2]); result.check($tablaGlobal); puts "guardia -> guardia && booleano" }
         | guardia TkDisy booleano       { result = ASTDisy.new(val[0], val[2]); puts "guardia -> guardia || booleano" }
         | TkNeg guardia                 { result = ASTNeg.new(val[1]);          puts "guardia -> ~ guardia" }
         | booleano                      { puts "guardia -> booleano"}
@@ -210,8 +210,8 @@ booleano: exp TkLE exp                { result = ASTLeq.new(val[0], val[2]); put
         | exp TkDif exp               { result = ASTDif.new(val[0], val[2]); puts "guardia -> exp operador exp" }
         | exp TkLess exp              { result = ASTLess.new(val[0], val[2]); puts "guardia -> exp operador exp" }
         | exp TkGreat exp             { result = ASTGreat.new(val[0], val[2]); puts "guardia -> exp operador exp" }
-        | TkTrue                      { puts "guardia -> true" }
-        | TkFalse                     { puts "guardia -> false" }
+        | TkTrue                      { result = ASTExpBool.new(val[0]); puts "guardia -> true" }
+        | TkFalse                     { result = ASTExpBool.new(val[0]); puts "guardia -> false" }
 ; 
 
 end # RubyCalcParser

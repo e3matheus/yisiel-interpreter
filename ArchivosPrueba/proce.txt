@@ -1,7 +1,7 @@
-var c, t : value
+var x, t2 : value
 var c : array of 3
-proc proc1(in a, in c, out d) as begin x <- a+2; poc2(2,c,1); return end
-proc proc2(in a2, in b2, out c2) as var t : array of 3 begin c <- 1 + 2; return end
+proc proc1(in a, in c, out d) as begin x <- a+2;  return end
+proc proc2(in a2, in b2, out c2) as var p1 : array of 3 begin x <- c2 + 2; return end
 main
 show i-j
 end
