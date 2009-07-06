@@ -1,6 +1,6 @@
 var c, t : value
 var c : array of 3
-proc procedimiento1(in a, in b, out c) as var t, t : array of 3
+proc procedimiento1(in a, in c, out a) as var d, d : array of 3 var d :value
 begin
 c <- 1 + 2;
 return

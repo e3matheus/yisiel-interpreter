@@ -94,7 +94,8 @@ class ASTDec < ASTBinario
             bool = $tablaGlobal.isTwice(hijo.getId(), sym)
             raise DeclaracionRepetida, "Declaracion repetida en linea #{hijo.getToken().line}, columna #{hijo.getToken().col}" if bool 
           when 1 # Revisa una tabla local y la tabla global.
-            supertabla = merge($tablaGlobal,tabla)
+            supertabla = SymTable.new()
+            supertabla.merge($tablaGlobal,*tabla)
             bool = supertabla.isTwice(hijo.getId(),sym) 
             raise DeclaracionRepetida, "Declaracion repetida en linea #{hijo.getToken().line}, columna #{hijo.getToken().col}" if bool 
         end
@@ -299,11 +300,12 @@ class ASTDecTotal < ASTMultipleProc
 end
 
 class ASTProc < ASTMultiple
-  attr_accessor :tabla, :parametros
-  def initialize(term1,term2, term3, term4, term5, term6)
- 
+  attr_accessor :tabla, :parametros, :locales
+  def initialize(term1,term2, term3, locales, term5, term6) 
+    @locales = locales
+
     # Crear la tabla y se le pasa el arbol.    
-    @tabla = term4.tablaProc
+    @tabla = locales.tablaProc
     arbol = term6
 
     # Insertar Valores en la tabla.
@@ -325,8 +327,7 @@ class ASTProc < ASTMultiple
   def check()
     superTabla = SymTable.new()
     superTabla.merge(@tabla,$tablaGlobal)
-#    puts "te lo mando con #{$tablaGlobal.key.size} elementos"
-    return @parametros.check(superTabla)
+    return @parametros.check(@tabla) && @locales.check(@tabla) 
   end
 end
 
@@ -345,13 +346,8 @@ class ASTParametros < ASTBinario
   end
 
   def check(tabla)
-    if getModo == "Out" 
-      sym = 'ParOut'    
-    else  
-      sym = 'ParIn'  
-    end
-    begin
-      bool = tabla.isTwice(getId(), sym)  
+   begin
+      bool = tabla.isTwice(getId())  
       raise DeclaracionRepetida, "Declaracion repetida en linea #{getToken().line}, columna #{getToken().col}" if bool  
     rescue DeclaracionRepetida => err
       puts "\n#{err}"
