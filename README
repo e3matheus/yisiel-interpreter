@@ -1,0 +1,17 @@
+Yisiel Intepreter.
+
+The language is very similar to the GCL language [1], with some extensions
+interesting for the course(Interpreter and Translator). The definition of the language its in the folder project_definition.
+In the definition are left out several details in the exchange so that we(students) would find them.
+
+The development was performed at three parts:
+
+1. Lexicografic parsing.
+2. Sintatic parsing and feeding on the Table of Symbols.
+3. Construction on the abstract tree, parsing of context and interpretation.
+
+This is one of the courses I made as student in the Simon Bolivar University, in Caracas, Venezuela.
+
+This project was created by the Simon Bolívar University(Computer and Information Tecnology department), specifically by professor Ernesto Hernández-Novich.
+CI3725 - Translator and Interpreter
+April-July 2009
